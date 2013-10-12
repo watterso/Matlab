@@ -16,13 +16,22 @@ figure(1);
 h = plot(t_1,g_1);
 set(h(1),'LineWidth',2);
 grid on;
-title(['$' '37a: y_1(t) = u(-t)\mathrm{e}^{\frac{t}{2}}+u(t)' '$'],'Interpreter','latex', 'FontSize',20)
+title(['$' '37a: y_1(t) = \mathrm{e}^{\frac{t}{2}}u(-t)+u(t)' '$'],'Interpreter','latex', 'FontSize',20)
 ylabel('y_1(t)');
 
 
 %part b
 h_2(t) = u(t+2);
 y_2(t) = convfun(h_2,f);
+t_2 = -10:.1:10;
+g_2 = y_2(t_2);
+
+figure(2);
+h = plot(t_2,g_2);
+set(h(1),'LineWidth',2);
+grid on;
+title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(2-t)' '$'],'Interpreter','latex', 'FontSize',20)
+ylabel('y_2(t)');
 
 %part c
 syms b

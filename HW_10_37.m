@@ -34,6 +34,16 @@ title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(2-t)' '$'],'Interp
 ylabel('y_2(t)');
 
 %part c
-syms b
+b = .0000001;
 h_3(t) = exp(-b*t)*u(t);
 y_3(t) = convfun(h_3,f);
+t_3 = -10:.1:10;
+g_3 = y_3(t_3);
+
+figure(3);
+h = plot(t_3,g_3);
+set(h(1),'LineWidth',2);
+grid on;
+%title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(2-t)' '$'],'Interpreter','latex', 'FontSize',20)
+ylabel('y_3(t)');
+

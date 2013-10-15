@@ -30,11 +30,11 @@ figure(2);
 h = plot(t_2,g_2);
 set(h(1),'LineWidth',2);
 grid on;
-title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(2-t)' '$'],'Interpreter','latex', 'FontSize',20)
+title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(t+2)' '$'],'Interpreter','latex', 'FontSize',20)
 ylabel('y_2(t)');
 
 %part c
-b = .0000001;
+b = .1;
 h_3(t) = exp(-b*t)*u(t);
 y_3(t) = convfun(h_3,f);
 t_3 = -10:.1:10;
@@ -44,6 +44,6 @@ figure(3);
 h = plot(t_3,g_3);
 set(h(1),'LineWidth',2);
 grid on;
-%title(['$' '37b: y_2(t) = 2\mathrm{e}^{\frac{t-2}{2}}r(2-t)+r(2-t)' '$'],'Interpreter','latex', 'FontSize',20)
+title(['$' '37c: y_3(t) = \frac{1}{3}\mathrm{e}^{\frac{-t}{10}}(5(\mathrm{e}^{\frac{3t}{5}}-1)u(-t)+5)-10(\mathrm{e}^{\frac{-t}{10}}-1)u(t)' '$'],'Interpreter','latex', 'FontSize',20)
 ylabel('y_3(t)');
 

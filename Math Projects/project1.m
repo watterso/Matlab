@@ -1,7 +1,5 @@
-t0 = 0;
-tf = 20;
-strength = [0.0 0.2 0.4 0.6 0.8 1.0];
-
-%THIS
-func = @(t,u)[0;-1*(u+ u.^3)];
-[T Y] = ode45(func,[0 20],[0;1]);
+tspan = [0 20];
+y0 = [0 1];
+func = @(t,u)[u(2);-u(1)-u(1)^3];
+[T Y] = ode45(func,tspan,y0);
+%important reference: http://stackoverflow.com/questions/13224292/second-order-diff-eq-with-ode45-in-matlab

@@ -37,10 +37,10 @@ for n = dimen(1):dimen(2)
     uplus = T(crit1+ind-1);
     
     if n==1
-        legend(['\epsilon = ' num2str(eps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend(['\epsilon = ' num2str(eps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','EastOutside');
     else
         [LEGH,OBJH,OUTH,OUTM] = legend;
-        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(eps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(eps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','EastOutside');
     end
 end
 grid on;
@@ -68,10 +68,10 @@ for n = dimen(1):dimen(2)
     uplus = T(crit1+ind-1);
     
     if n==1
-        legend(['\epsilon = ' num2str(heps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend(['\epsilon = ' num2str(heps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','EastOutside');
     else
         [LEGH,OBJH,OUTH,OUTM] = legend;
-        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(heps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(heps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','EastOutside');
     end
 end
 grid on;
@@ -99,10 +99,10 @@ for n = dimen(1):dimen(2)
     uminus = T(crit1+ind-1);
     
     if n==1
-        legend(['\epsilon = ' num2str(-1*neps(n)) ', Amplitude = ' num2str(amp) ', u- = ' num2str(uminus)],'Location','SouthOutside');
+        legend(['\epsilon = ' num2str(-1*neps(n)) ', Amplitude = ' num2str(amp) ', u- = ' num2str(uminus)],'Location','EastOutside');
     else
         [LEGH,OBJH,OUTH,OUTM] = legend;
-        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(-1*neps(n)) ', A = ' num2str(amp) ', u- = ' num2str(uminus)],'Location','SouthOutside');
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(-1*neps(n)) ', A = ' num2str(amp) ', u- = ' num2str(uminus)],'Location','EastOutside');
     end
 end
 grid on;
@@ -120,7 +120,7 @@ for n = dimen(1):dimen(2)
     hold on;
     amp = max(abs(res.y(1,:)));
     
-    %calc u+
+    %calc u-
     T = res.x;
     U = res.y(1,:);
     DU = res.y(2,:);
@@ -130,13 +130,60 @@ for n = dimen(1):dimen(2)
     uplus = T(crit1+ind-1);
     
     if n==1
-        legend(['\epsilon = ' num2str(-1*leps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend(['\epsilon = ' num2str(-1*leps(n)) ', Amplitude = ' num2str(amp) ', u- = ' num2str(uplus)],'Location','EastOutside');
     else
         [LEGH,OBJH,OUTH,OUTM] = legend;
-        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(-1*leps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(-1*leps(n)) ', A = ' num2str(amp) ', u- = ' num2str(uplus)],'Location','EastOutside');
     end
 end
 grid on;
 xlabel('Time (s)');
 ylabel('Position');
 title(['$' 'Graph\ 4,\ \epsilon \to -\infty' '$'],'Interpreter','latex', 'FontSize',20);
+%clear for part 3
+clear;
+
+%%%% PART 3 %%%%
+w = [0.5 0.7 1 1.3 2.0];
+
+odecalc = @(w,tspan,y0)ode45(str2func(char(sprintf('@(t,u)[u(2);cos(%f*t)-u(2)/5-u(1)-(u(1)^3)/5]',w))),tspan,y0);
+%wrapper for part 3
+wrapper3 = @(w)odecalc(w,[0 60],[0 0]);
+%wrapper for finding omega*
+wrapper4 = @(w)odecalc(w,[40 60],[0 0]);
+
+dimen = size(w);
+cmap = lines(dimen(2));
+figure(5);
+for n = dimen(1):dimen(2)
+    res = wrapper3(w(n));
+    newplot = plot(res.x,res.y(1,:),'LineWidth',1.5,'Color',cmap(n,:));
+    hold on;
+    
+    if n==1
+        legend(['\omega = ' num2str(w(n))],'Location','EastOutside');
+    else
+        [LEGH,OBJH,OUTH,OUTM] = legend;
+        legend([OUTH;newplot],OUTM{:},['\omega = ' num2str(w(n))],'Location','EastOutside');
+    end
+end
+grid on;
+xlabel('Time (s)');
+ylabel('Position');
+title(['$' 'Graph\ 5,\ \omega\ at\ selected\ values' '$'],'Interpreter','latex', 'FontSize',20);
+
+%find w to maximize |u(t)| => find w for max amplitude
+%based on graph 5, it is somewhere between 1 and 2
+w1 = 1:.01:2;
+maxVal = 0;
+maxW = 0;
+dimen = size(w1);
+for n = dimen(1):dimen(2)
+    res = wrapper4(w1(n));
+    tmpMax = max(abs(res.y(1,:)));
+    if tmpMax > maxVal
+        maxVal = tmpMax;
+        maxW = w1(n);
+    end
+end
+fprintf('over the interval [40,60] |u(t)| maximized by w = %f, with a max of %f\n',maxW,maxVal);

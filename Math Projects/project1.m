@@ -1,5 +1,75 @@
-tspan = [0 20];
-y0 = [0 1];
-func = @(t,u)[u(2);-u(1)-u(1)^3];
-[T Y] = ode45(func,tspan,y0);
-%important reference: http://stackoverflow.com/questions/13224292/second-order-diff-eq-with-ode45-in-matlab
+%ode45 has complex usage, this stackoverflow link clears it up:
+%http://stackoverflow.com/questions/13224292/second-order-diff-eq-with-ode45-in-matlab
+
+%epsilon vals
+eps = [0 .2 .4 .6 .8 1];
+%epsilon vals as they grow
+heps = [1 10 100 1000 10000 100000];
+
+%function handles
+negodecalc = @(e,tspan,y0)ode45(str2func(char(sprintf('@(t,u)[u(2);-u(1)-%f*u(1)^3]',e))),tspan,y0);
+odecalc = @(e,tspan,y0)ode45(str2func(char(sprintf('@(t,u)[u(2);-u(1)+%f*u(1)^3]',e))),tspan,y0);
+wrapper1 = @(e)negodecalc(e,[0 20],[0 1]);
+wrapper2 = @(e)odecalc(e,[0 20],[0 1]);
+
+%
+dimen = size(eps);
+cmap = lines(dimen(2));
+figure(1);
+for n = dimen(1):dimen(2)
+    res = wrapper1(eps(n));
+    newplot = plot(res.x,res.y(1,:),'LineWidth',1.5,'Color',cmap(n,:));
+    hold on;
+    amp = max(res.y(1,:));
+    
+    %calc u+
+    T = res.x;
+    U = res.y(1,:);
+    DU = res.y(2,:);
+    crit1 = find(DU<0,1);
+    crit2 = find(DU(crit1:end)>0,1)+crit1;
+    [val,ind] = min(abs(U(crit1:crit2)));
+    uplus = T(crit1+ind-1);
+    
+    if n==1
+        legend(['\epsilon = ' num2str(eps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+    else
+        [LEGH,OBJH,OUTH,OUTM] = legend;
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(eps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+    end
+end
+grid on;
+xlabel('Time (s)');
+ylabel('Position');
+title(['$' 'Graph\ 1,\ \epsilon > 0' '$'],'Interpreter','latex', 'FontSize',20);
+
+%
+dimen = size(heps);
+cmap = lines(dimen(2));
+figure(2);
+for n = dimen(1):dimen(2)
+    res = wrapper1(heps(n));
+    newplot = plot(res.x,res.y(1,:),'LineWidth',1.5,'Color',cmap(n,:));
+    hold on;
+    amp = max(res.y(1,:));
+    
+    %calc u+
+    T = res.x;
+    U = res.y(1,:);
+    DU = res.y(2,:);
+    crit1 = find(DU<0,1);
+    crit2 = find(DU(crit1:end)>0,1)+crit1;
+    [val,ind] = min(abs(U(crit1:crit2)));
+    uplus = T(crit1+ind-1);
+    
+    if n==1
+        legend(['\epsilon = ' num2str(heps(n)) ', Amplitude = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+    else
+        [LEGH,OBJH,OUTH,OUTM] = legend;
+        legend([OUTH;newplot],OUTM{:},['\epsilon = ' num2str(heps(n)) ', A = ' num2str(amp) ', u+ = ' num2str(uplus)],'Location','SouthOutside');
+    end
+end
+grid on;
+xlabel('Time (s)');
+ylabel('Position');
+title(['$' 'Graph\ 2,\ \epsilon \to \infty' '$'],'Interpreter','latex', 'FontSize',20);

@@ -1,3 +1,6 @@
+%MA266 Project 1
+%James Watterson
+
 %ode45 has complex usage, this stackoverflow link clears it up:
 %http://stackoverflow.com/questions/13224292/second-order-diff-eq-with-ode45-in-matlab
 
